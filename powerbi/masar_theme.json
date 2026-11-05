@@ -1,0 +1,25 @@
+{
+  "name": "Masar",
+  "dataColors": ["#0F8A6A", "#C8962E", "#3B82F6", "#A855F7", "#EF4444", "#14B8A6", "#F59E0B", "#64748B", "#EC4899", "#22C55E"],
+  "background": "#FFFFFF",
+  "foreground": "#0F172A",
+  "tableAccent": "#0F8A6A",
+  "good": "#0F8A6A",
+  "neutral": "#C8962E",
+  "bad": "#EF4444",
+  "maximum": "#095A46",
+  "center": "#C8962E",
+  "minimum": "#EEF7F4",
+  "textClasses": {
+    "title": { "fontFace": "Segoe UI Semibold", "fontSize": 14, "color": "#0F172A" },
+    "label": { "fontFace": "Segoe UI", "fontSize": 10, "color": "#475569" },
+    "callout": { "fontFace": "Segoe UI Semibold", "fontSize": 26, "color": "#095A46" }
+  },
+  "visualStyles": {
+    "*": { "*": {
+      "border": [{ "show": true, "color": { "solid": { "color": "#E2E8F0" } }, "radius": 12 }],
+      "dropShadow": [{ "show": false }]
+    } },
+    "page": { "*": { "background": [{ "color": { "solid": { "color": "#F8FAFC" } }, "transparency": 0 }] } }
+  }
+}

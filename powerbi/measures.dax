@@ -1,0 +1,68 @@
+// ===== Masar – DAX measures. Create a table "_Measures" (Enter data, one blank column) and paste each measure. =====
+
+// ---------- Customers ----------
+Customers = DISTINCTCOUNT ( dim_customer[customer_key] )
+Digital Customers = CALCULATE ( [Customers], dim_customer[digital_active] = TRUE () )
+Digital Adoption % = DIVIDE ( [Digital Customers], [Customers] )
+Investors = CALCULATE ( [Customers], dim_customer[is_investor] = TRUE () )
+Investor Penetration % = DIVIDE ( [Investors], [Customers] )
+Sharia Preference % = DIVIDE ( CALCULATE ( [Customers], dim_customer[sharia_preference] = TRUE () ), [Customers] )
+High AML Risk Customers = CALCULATE ( [Customers], dim_customer[aml_risk] = "High" )
+
+// ---------- Deposits & products ----------
+EGP Deposits = CALCULATE ( SUM ( fact_accounts[balance] ), fact_accounts[currency] = "EGP" )
+USD Deposits = CALCULATE ( SUM ( fact_accounts[balance] ), fact_accounts[currency] = "USD" )
+CD Balance = SUM ( fact_certificates[amount] )
+Avg CD Rate = AVERAGE ( fact_certificates[rate] )
+Total Deposits EGP = [EGP Deposits] + [CD Balance]
+Avg Balance per Customer = DIVIDE ( [EGP Deposits], [Customers] )
+Credit Card Limit = SUM ( fact_cards[credit_limit] )
+Card Utilisation % = DIVIDE ( SUM ( fact_cards[outstanding] ), [Credit Card Limit] )
+
+// ---------- Lending & risk ----------
+Loan Book = SUM ( fact_loans[remaining] )
+Loans Count = COUNTROWS ( fact_loans )
+NPL Balance (90+) = CALCULATE ( [Loan Book], fact_loans[days_past_due] > 90 )
+NPL Ratio % = DIVIDE ( [NPL Balance (90+)], [Loan Book] )
+Loans to Deposits % = DIVIDE ( [Loan Book], [Total Deposits EGP] )
+Avg Loan Rate = AVERAGE ( fact_loans[rate] )
+
+// ---------- Transactions ----------
+Transactions = COUNTROWS ( fact_transactions )
+Spend = SUM ( fact_transactions[debit_amount] )
+Income Inflows = SUM ( fact_transactions[credit_amount] )
+Net Flow = [Income Inflows] - [Spend]
+Avg Ticket = DIVIDE ( [Spend], CALCULATE ( [Transactions], fact_transactions[direction] = "debit" ) )
+Spend per Customer = DIVIDE ( [Spend], [Customers] )
+Spend MoM % =
+VAR cur = [Spend]
+VAR prev = CALCULATE ( [Spend], DATEADD ( dim_date[date], -1, MONTH ) )
+RETURN DIVIDE ( cur - prev, prev )
+Spend YTD = TOTALYTD ( [Spend], dim_date[date] )
+Cash Withdrawal Share % = DIVIDE ( CALCULATE ( [Spend], fact_transactions[category] = "cash" ), [Spend] )
+Digital Channel Share % =
+DIVIDE ( CALCULATE ( [Spend], fact_transactions[channel] IN { "E-commerce", "InstaPay", "Wallet", "Fawry" } ), [Spend] )
+Ramadan Spend Uplift % =
+VAR r = CALCULATE ( DIVIDE ( [Spend], DISTINCTCOUNT ( dim_date[date] ) ), dim_date[is_ramadan] = TRUE () )
+VAR n = CALCULATE ( DIVIDE ( [Spend], DISTINCTCOUNT ( dim_date[date] ) ), dim_date[is_ramadan] = FALSE () )
+RETURN DIVIDE ( r - n, n )
+
+// ---------- Fraud & security ----------
+Fraud Transactions = CALCULATE ( [Transactions], fact_transactions[is_fraud] = TRUE () )
+Fraud Amount = CALCULATE ( [Spend], fact_transactions[is_fraud] = TRUE () )
+Fraud Rate (bps) = DIVIDE ( [Fraud Transactions], [Transactions] ) * 10000
+Fraud Loss % of Spend = DIVIDE ( [Fraud Amount], [Spend] )
+Logins = SUM ( fact_logins_daily[logins] )
+Failed Logins = SUM ( fact_logins_daily[failed] )
+Failed Login % = DIVIDE ( [Failed Logins], [Logins] )
+Attacked Customers = CALCULATE ( DISTINCTCOUNT ( fact_logins_daily[customer_key] ), fact_logins_daily[attack_flag] = 1 )
+
+// ---------- Investments ----------
+Holdings Positions = COUNTROWS ( fact_holdings )
+Holders = DISTINCTCOUNT ( fact_holdings[customer_key] )
+Avg Model P(up) = AVERAGE ( dim_instrument[prob_up] )
+
+// ---------- Data quality ----------
+DQ Checks Passed = CALCULATE ( COUNTROWS ( dq_results ), dq_results[status] = "PASS" )
+DQ Pass Rate % = DIVIDE ( [DQ Checks Passed], COUNTROWS ( dq_results ) )
+DQ Failed Records = SUM ( dq_results[failed] )

@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --color-brand-50: #eef7f4;
+  --color-brand-100: #d5ece4;
+  --color-brand-500: #0f8a6a;
+  --color-brand-600: #0b7257;
+  --color-brand-700: #095a46;
+  --color-gold-500: #c8962e;
+}
+
+html[dir="rtl"] body { font-family: "IBM Plex Sans Arabic", "Inter", "Segoe UI", Tahoma, sans-serif; }
+
+body { @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased; }
+
+.card { @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900; }
+.btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition disabled:opacity-50; }
+.btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition disabled:opacity-50 bg-brand-600 text-white hover:bg-brand-700; }
+.btn-ghost { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition disabled:opacity-50 border border-slate-200 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800; }
+.input { @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:focus:ring-brand-700; }
+.label { @apply mb-1 block text-xs font-semibold text-slate-500 dark:text-slate-400; }
+.chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+.muted { @apply text-slate-500 dark:text-slate-400; }
+.num { font-variant-numeric: tabular-nums; }
+
+@keyframes flashUp { from { background: rgba(16,185,129,.25); } to { background: transparent; } }
+@keyframes flashDown { from { background: rgba(239,68,68,.25); } to { background: transparent; } }
+.flash-up { animation: flashUp .9s ease-out; }
+.flash-down { animation: flashDown .9s ease-out; }
+.privacy .sensitive { filter: blur(7px); user-select: none; }
